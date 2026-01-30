@@ -1,0 +1,82 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd0
+      name: Templates/Applications
+  templates:
+    - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd1
+      template: 'Template_1GB_ru_Monitoring'
+      name: Template 1GB.ru Monitoring
+      description: 'Мониторинг баланса и доменов 1gb.ru через API'
+      groups:
+        - name: Templates/Applications
+      items:
+        - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd2
+          name: 'Баланс аккаунта'
+          key: '1gb.balance'
+          value_type: FLOAT
+          units: '₽'
+          delay: '1h'
+          description: 'Текущий баланс в рублях'
+        - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd3
+          name: 'Дней до следующей оплаты'
+          key: '1gb.days_to_payment'
+          value_type: CHAR
+          units: 'дней'
+          delay: '1h'
+          description: 'Количество дней до следующего списания'
+        - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd4
+          name: 'Сумма следующего платежа'
+          key: '1gb.payment_amount'
+          value_type: FLOAT
+          units: '₽'
+          delay: '1h'
+          description: 'Сумма предстоящего платежа в рублях'
+      discovery_rules:
+        - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd5
+          name: 'Домены 1gb.ru'
+          key: '1gb.domains.discovery'
+          delay: '1h'
+          item_prototypes:
+            - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd6
+              name: 'Дней до истечения: {#DOMAIN}'
+              key: '1gb.domain.expires[{#DOMAIN}]'
+              value_type: CHAR
+              units: 'дней'
+              delay: '1h'
+              description: 'Дней до истечения регистрации домена {#DOMAIN}'
+          trigger_prototypes:
+            - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd7
+              name: 'Домен {#DOMAIN} истекает через 30 дней'
+              expression: 'last(/Template_1GB_ru_Monitoring/1gb.domain.expires[{#DOMAIN}])<30 and last(/Template_1GB_ru_Monitoring/1gb.domain.expires[{#DOMAIN}])>14'
+              priority: WARNING
+            - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd8
+              name: 'Домен {#DOMAIN} истекает через 14 дней'
+              expression: 'last(/Template_1GB_ru_Monitoring/1gb.domain.expires[{#DOMAIN}])<14 and last(/Template_1GB_ru_Monitoring/1gb.domain.expires[{#DOMAIN}])>7'
+              priority: AVERAGE
+            - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd9
+              name: 'Домен {#DOMAIN} истекает через 7 дней'
+              expression: 'last(/Template_1GB_ru_Monitoring/1gb.domain.expires[{#DOMAIN}])<7 and last(/Template_1GB_ru_Monitoring/1gb.domain.expires[{#DOMAIN}])>0'
+              priority: HIGH
+            - uuid: a571c0d144b14fd4a87a9d9b2aa9fce0
+              name: 'Домен {#DOMAIN} просрочен'
+              expression: 'last(/Template_1GB_ru_Monitoring/1gb.domain.expires[{#DOMAIN}])<=0'
+              priority: DISASTER
+  triggers:
+  - uuid: a571c0d144b14fd4a87a9d9b2aa9fce1
+    name: Низкий баланс, до оплаты ≤30 дней
+    expression: 'last(/Template_1GB_ru_Monitoring/1gb.balance)<last(/Template_1GB_ru_Monitoring/1gb.payment_amount) and last(/Template_1GB_ru_Monitoring/1gb.days_to_payment)<=30 and last(/Template_1GB_ru_Monitoring/1gb.days_to_payment)>7'
+    priority: WARNING
+    description: 'Баланс меньше суммы платежа и до оплаты осталось ≤30 дней'
+
+  - uuid: a571c0d144b14fd4a87a9d9b2aa9fce2
+    name: 'Критически низкий баланс: до оплаты ≤7 дней'
+    expression: 'last(/Template_1GB_ru_Monitoring/1gb.balance)<last(/Template_1GB_ru_Monitoring/1gb.payment_amount) and last(/Template_1GB_ru_Monitoring/1gb.days_to_payment)<=7 and last(/Template_1GB_ru_Monitoring/1gb.days_to_payment)>0'
+    priority: HIGH
+    description: 'Баланс меньше суммы платежа и до оплаты осталось ≤7 дней — требуется срочное пополнение!'
+
+  - uuid: a571c0d144b14fd4a87a9d9b2aa9fce3
+    name: 'Оплата просрочена'
+    expression: 'last(/Template_1GB_ru_Monitoring/1gb.days_to_payment)<=0'
+    priority: DISASTER
+    description: 'Дата оплаты прошла — аккаунт может быть заблокирован'
