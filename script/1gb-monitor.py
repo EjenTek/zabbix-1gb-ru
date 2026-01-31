@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Мониторинг 1gb.ru API для Zabbix
-Версия: 1.0 (продакшен)
+Версия: 1.0
 """
 
 import sys
