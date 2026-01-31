@@ -58,3 +58,7 @@ sudo chmod 755 /var/log/1gb
 # Конфигурация агента
 sudo cp zabbix/userparameter_1gb.conf /etc/zabbix/zabbix_agent2.d/
 sudo systemctl restart zabbix-agent2
+
+
+###
+/etc/zabbix/zabbix_agent2.d/userparameter_1gb.conf
