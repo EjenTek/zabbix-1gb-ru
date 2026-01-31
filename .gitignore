@@ -1,0 +1,11 @@
+# Системные файлы
+*.log
+*.pyc
+__pycache__/
+*.swp
+.DS_Store
+
+# Чувствительные данные (НИКОГДА не коммитить!)
+/etc/1gb/token
+*.secure
+secrets/
