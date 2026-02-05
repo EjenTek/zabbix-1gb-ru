@@ -32,6 +32,10 @@
 ### 1. Настройка узла мониторинга (Ubuntu 24.04)
 
 ```bash
+# Копирование репозитория
+git clone https://github.com/EjenTek/zabbix-1gb-ru.git
+cd zabbix-1gb-ru
+
 # Установка зависимостей
 sudo apt update && sudo apt install -y python3 python3-requests zabbix-agent2
 
