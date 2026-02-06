@@ -63,8 +63,7 @@ sudo systemctl restart zabbix-agent2
 ```
 
 ### 2. Импорт шаблона в Zabbix
-Скачайте Template_1GB_RU.yaml
-https://raw.githubusercontent.com/EjenTek/zabbix-1gb-ru/refs/heads/main/zabbix/Template_1GB_RU.yaml
+Скачайте [Template_1GB_RU.yaml](https://raw.githubusercontent.com/EjenTek/zabbix-1gb-ru/refs/heads/main/zabbix/Template_1GB_RU.yaml)
 В веб-интерфейсе: Configuration → Templates → Import
 Выберите файл и отметьте Create new
 Привяжите шаблон к узлу на котором установлен Zabbix Agent 2 со скриптами
@@ -87,8 +86,7 @@ zabbix_agent2 -t "1gb.domains.discovery"
 Токен хранится в /etc/1gb/token с правами 640 (только root и zabbix)
 Скрипты не содержат чувствительных данных
 Рекомендуется изолировать узел мониторинга во внутренней сети
-Подробнее: docs/security.md
-https://github.com/EjenTek/zabbix-1gb-ru/blob/main/docs/security.md
+Подробнее: [docs/security.md](https://github.com/EjenTek/zabbix-1gb-ru/blob/main/docs/security.md)
 
 ## Важно
 - Токен 1gb.ru бессрочный, но становится недействительным при смене пароля аккаунта
